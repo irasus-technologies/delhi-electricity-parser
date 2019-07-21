@@ -9,7 +9,7 @@ def make_dictionary(blob, name, timetag, tabletag, count, value_position, value_
 	# Create empty dictionary to fill measurements into
 	x = {}
 	# Retrieve timestamp corresponding to the set of measurements of interest
-	x["timestamp"] = read.datetime_with_only_time(read.text_from_span_content(blob, timetag), 'HH:mm:ss')
+	x["timestamp"] = read.datetime_with_only_time(read.text_from_span_content(blob, timetag), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
 	# Retrieve rows from table containing power measurements from different entities
 	rows = blob.find("table", {"id": tabletag}).findAll('tr')
 	# Iterate over rows
