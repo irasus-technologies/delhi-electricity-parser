@@ -25,7 +25,7 @@ def fetch(session=None):
 
 	# Retrieve frequency of the grid from span tag's content
 	frequency = read.text_from_span_content(html, 'ContentPlaceHolder3_LBLFREQUENCY')
-	timestamp = read.datetime_with_only_time(read.text_from_span_content(html, "ContentPlaceHolder3_LblDate"), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
+	timestamp = read.datetime_with_only_time(read.text_from_span_content(html, "ContentPlaceHolder3_ddtime"), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
 
 	# Create dictionary of power generation/consumption measurements from different entities viz. plants, companies and jurisdictions
 	print make_dictionary(html, 'Plant', "ContentPlaceHolder3_ddgenco", "ContentPlaceHolder3_dgenco", 6, 2, 0)
