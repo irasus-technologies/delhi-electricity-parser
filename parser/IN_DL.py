@@ -28,10 +28,10 @@ def fetch(session=None):
 	timestamp = read.datetime_with_only_time(read.text_from_span_content(html, "ContentPlaceHolder3_ddtime"), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
 
 	# Create dictionary of power generation/consumption measurements from different entities viz. plants, companies and jurisdictions
-	print make_dictionary(html, 'Plant', "ContentPlaceHolder3_ddgenco", "ContentPlaceHolder3_dgenco", 6, 2, 0)
-	print make_dictionary(html, 'DISCOM', "ContentPlaceHolder3_ddtime", "ContentPlaceHolder3_DDISCOM", 6, 2, 0)
-	print make_dictionary(html, 'State', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_Dstatedrawl", 8, 4, 0)
-	print make_dictionary(html, 'Centre', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_dcsgeneration", 25, 2, 0)
+	print make_dictionary(html, 'plants_state', "ContentPlaceHolder3_ddgenco", "ContentPlaceHolder3_dgenco", 6, 2, 0)
+	print make_dictionary(html, 'discoms', "ContentPlaceHolder3_ddtime", "ContentPlaceHolder3_DDISCOM", 6, 2, 0)
+	print make_dictionary(html, 'states', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_Dstatedrawl", 8, 4, 0)
+	print make_dictionary(html, 'plants_centre', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_dcsgeneration", 25, 2, 0)
 
 if __name__ == '__main__':
 	session = Session()

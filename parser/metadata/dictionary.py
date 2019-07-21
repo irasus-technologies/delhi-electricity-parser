@@ -56,8 +56,8 @@ plants_centre = {
 }
 
 items = {
-	"Plant": plants_state,
-	"DISCOM": discoms,
-	"State": states,
-	"Centre": plants_centre
+	"plants_state": plants_state,
+	"discoms": discoms,
+	"states": states,
+	"plants_centre": plants_centre
 }
