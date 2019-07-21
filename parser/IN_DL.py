@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from requests import Session
-from .lib import web
-from .lib import read
+from .tools import web
+from .tools import read
 from .metadata import dictionary
 
 def make_dictionary(blob, name, timetag, tabletag, count, value_position, value_nonnegative):
