@@ -1,7 +1,7 @@
 from requests import Session
 from bs4 import BeautifulSoup
 
-import exceptions
+from .exceptions import ParserException
 
 def get_response(zone_key, url, session=None):
 	"""Get response"""
