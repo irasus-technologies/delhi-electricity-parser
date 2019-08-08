@@ -13,7 +13,8 @@ discoms = {
 	"NDPL": 3,
 	"NDMC": 4,
 	"MES": 5,
-	"RAILWAY": 6
+	"RAILWAY": 6,
+	"TPDDL": 7
 }
 
 states = {
