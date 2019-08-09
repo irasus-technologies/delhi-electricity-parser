@@ -104,10 +104,60 @@ substations = {
 	"Wazirpur": 45
 }
 
+energy_export = {
+	"BBMB-Narela-220/132KV T-2": 1,
+	"220KV Badarpur-Alwar": 2,
+	"220KV Badarpur-Noida": 3,
+	"220KV Gazipur-Noida-20": 4,
+	"220KV Gazipur-Noida62": 5,
+	"220KV Gazipur-SHBAD": 6,
+	"66KV Delhi-Gurgaon-1": 7,
+	"66KV Delhi-Gurgaon-2": 8,
+	"400kV CCGT Bawana": 9
+}
+
+energy_import = {
+	"Bamnauli-400/220KV ICT-1": 1,
+	"Bamnauli-400/220KV ICT-2": 2,
+	"Bamnauli-400/220KV ICT-3": 3,
+	"Bamnauli-400/220KV ICT-4": 4,
+	"Bawana-400/220KV ICT-1": 5,
+	"Bawana-400/220KV ICT-2": 6,
+	"Bawana-400/220KV ICT-3": 7,
+	"Bawana-400/220KV ICT-4": 8,
+	"Bawana-400/220KV ICT-5": 9,
+	"Bawana-400/220KV ICT-6": 10,
+	"Harsh Vihar-400/220KV ICT-1": 11,
+	"Harsh Vihar-400/220KV ICT-2": 12,
+	"Harsh Vihar-400/220KV ICT-3": 13,
+	"Maharani Bagh-400/220KV ICT-1": 14,
+	"Maharani Bagh-400/220KV ICT-2": 15,
+	"Maharani Bagh-400/220KV ICT-3": 16,
+	"Maharani Bagh-400/220KV ICT-4": 17,
+	"Mandaula-400/220KV ICT-1": 18,
+	"Mandaula-400/220KV ICT-2": 19,
+	"Mandaula-400/220KV ICT-3": 20,
+	"Mandaula-400/220KV ICT-4": 21,
+	"Mundka-400/220KV ICT-2": 22,
+	"Mundka-400/220KV ICT-3": 23,
+	"Mundka-400/220KV ICT-4": 24,
+	"Tuglakabad-400/220KV ICT-1": 25,
+	"Tuglakabad-400/220KV ICT-2": 26,
+	"Tuglakabad-400/220KV ICT-3": 27,
+	"Tuglakabad-400/220KV ICT-4": 28,
+	"220KV Badarpur-Ballabhgarh-I": 29,
+	"220KV Badarpur-Ballabhgarh-II": 30,
+	"220KV Narela-Panipat-I": 31,
+	"220KV Narela-Panipat-II": 32,
+	"220KV Narela-Panipat-III": 33
+}
+
 items = {
 	"plants_state": plants_state,
 	"discoms": discoms,
 	"states": states,
 	"plants_centre": plants_centre,
-	"substations": substations
+	"substations": substations,
+	"energy_export": energy_export,
+	"energy_import": energy_import
 }
