@@ -32,6 +32,7 @@ def fetch(session=None):
 	print(make_dictionary(html, 'discoms', "ContentPlaceHolder3_ddtime", "ContentPlaceHolder3_DDISCOM", 6, 2, 0))
 	print(make_dictionary(html, 'states', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_Dstatedrawl", 8, 4, 0))
 	print(make_dictionary(html, 'plants_centre', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_dcsgeneration", 25, 2, 0))
+	print(make_dictionary(html, 'substations', "ContentPlaceHolder3_lblgridtime", "ContentPlaceHolder3_dgrid", 45, 2, 0))
 
 if __name__ == '__main__':
 	session = Session()

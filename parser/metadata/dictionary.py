@@ -56,9 +56,58 @@ plants_centre = {
 	"URI": 25
 }
 
+substations = {
+	"Badarpur": 1,
+	"Bamnauli": 2,
+	"Bawana": 3,
+	"CCGT-Bawana": 4,
+	"DIAL": 5,
+	"DSIDC": 6,
+	"Gazipur": 7,
+	"Geeta Colony": 8,
+	"GopalPur": 9,
+	"HCM Lane": 10,
+	"Harsh Vihar": 11,
+	"IP Power": 12,
+	"Kanjhawla": 13,
+	"Kashmiri Gate": 14,
+	"Lodhi Rd": 15,
+	"Maharanibagh": 16,
+	"Mandaula": 17,
+	"Masjid Moth": 18,
+	"Mehrauli": 19,
+	"Mundka": 20,
+	"Najafgarh": 21,
+	"Naraina": 22,
+	"Narela": 23,
+	"Okhla": 24,
+	"Papankalan-1": 25,
+	"Papankalan-2": 26,
+	"Papankalan-3": 27,
+	"Park Street": 28,
+	"Patparganj": 29,
+	"Peera Garhi": 30,
+	"Pragati": 31,
+	"Preet Vihar": 32,
+	"Rajghat": 33,
+	"Ridge Valley": 34,
+	"Rkpuram": 35,
+	"Rohini-II": 36,
+	"Rohini1": 37,
+	"Sarita Vihar": 38,
+	"Shalimar Bagh": 39,
+	"Subzi Mandi": 40,
+	"Trauma centre": 41,
+	"Tuglakabad": 42,
+	"Vasant Kunj": 43,
+	"Wazirabad": 44,
+	"Wazirpur": 45
+}
+
 items = {
 	"plants_state": plants_state,
 	"discoms": discoms,
 	"states": states,
-	"plants_centre": plants_centre
+	"plants_centre": plants_centre,
+	"substations": substations
 }
