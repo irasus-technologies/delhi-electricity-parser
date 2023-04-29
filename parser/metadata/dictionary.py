@@ -101,7 +101,10 @@ substations = {
 	"Tuglakabad": 42,
 	"Vasant Kunj": 43,
 	"Wazirabad": 44,
-	"Wazirpur": 45
+	"Wazirpur": 45,
+	"SGT Nagar": 46,
+	"Dwarka": 47,
+	"DEV NAGAR": 48
 }
 
 energy_export = {
@@ -138,6 +141,7 @@ energy_import = {
 	"Mandaula-400/220KV ICT-2": 19,
 	"Mandaula-400/220KV ICT-3": 20,
 	"Mandaula-400/220KV ICT-4": 21,
+	"Mundka-400/220KV ICT-1": 38,
 	"Mundka-400/220KV ICT-2": 22,
 	"Mundka-400/220KV ICT-3": 23,
 	"Mundka-400/220KV ICT-4": 24,
@@ -149,7 +153,11 @@ energy_import = {
 	"220KV Badarpur-Ballabhgarh-II": 30,
 	"220KV Narela-Panipat-I": 31,
 	"220KV Narela-Panipat-II": 32,
-	"220KV Narela-Panipat-III": 33
+	"220KV Narela-Panipat-III": 33,
+	"Dwarka-400/220KV ICT-1": 34,
+	"Dwarka-400/220KV ICT-2": 35,
+	"Dwarka-400/220KV ICT-3": 36,
+	"Dwarka-400/220KV ICT-4": 37
 }
 
 items = {
