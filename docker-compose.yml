@@ -1,0 +1,59 @@
+x-logging: &logging
+
+    logging:
+
+            driver: local
+
+            options:
+                max-size: "20m"
+                max-file: "5"
+                compress: "true"
+
+version: "3.9"
+
+networks:
+
+    khyber:
+
+        external: false
+
+        driver: bridge
+
+services:
+
+    delhi-electricity:
+
+        <<: *logging
+
+        restart: unless-stopped
+
+        networks:
+            - khyber
+
+        container_name: delhi-electricity
+
+        build:
+            context: ./delhi-electricity
+            args:
+                - TZ=${TZ}
+                - PYTHON_VERSION=${PYTHON_VERSION}
+                - UBUNTU_VERSION=${UBUNTU_VERSION}
+
+        image: irasus/delhi-electricity:${IRASUS_DELHI_ELECTRICITY_VERSION}
+
+        environment:
+            - DELHI_ELECTRICITY__TIMESCALEDB__HOSTNAME=${DELHI_ELECTRICITY__TIMESCALEDB__HOSTNAME}
+            - DELHI_ELECTRICITY__TIMESCALEDB__PORTNUMBER=${POSTGRESQL_PORTNUMBER:-5432}
+            - DELHI_ELECTRICITY__TIMESCALEDB__DATABASE=${DATABASE_SERVER_DATABASENAME}
+            - DELHI_ELECTRICITY__TIMESCALEDB__USERNAME=${DATABASE_SERVER_USERNAME}
+            - DELHI_ELECTRICITY__TIMESCALEDB__PASSWORD=${DATABASE_SERVER_PASSWORD}
+
+        depends_on:
+
+            flyway_timescaledb:
+
+                condition: service_completed_successfully
+
+        profiles: [
+            "features/delhi-electricity"
+        ]

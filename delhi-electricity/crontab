@@ -1,0 +1,1 @@
+*/1 * * * * (cd / && python3 -m parser.IN_DL)
