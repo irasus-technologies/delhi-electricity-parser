@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
+from sqlalchemy.orm import scoped_session, sessionmaker
 from requests import Session
+import os
+
 from .tools import web
 from .tools import read
+from .tools import delhi_electricity
 from .metadata import dictionary
 
 def make_dictionary(blob, name, timetag, tabletag, count, value_position, value_nonnegative):
@@ -19,13 +23,28 @@ def make_dictionary(blob, name, timetag, tabletag, count, value_position, value_
 	# Return a dictionary of all power measurements and the corresponding timestamp
 	return x
 
-def fetch(session=None):
+def fetch(requests_session=None, sqlalchemy_session=None):
 	# Read real-time dashboard's webpage into blob using BeautifulSoup
-	html = web.get_response_bs4('IN-DL', 'http://www.delhisldc.org/Redirect.aspx?Loc=0804', session)
+	html = web.get_response_bs4('IN-DL', 'http://www.delhisldc.org/Redirect.aspx?Loc=0804', requests_session)
 
 	# Retrieve frequency of the grid from span tag's content
 	frequency = read.text_from_span_content(html, 'ContentPlaceHolder3_LBLFREQUENCY')
 	timestamp = read.datetime_with_only_time(read.text_from_span_content(html, "ContentPlaceHolder3_ddtime"), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
+	# print(str(frequency) + ' ' + str(timestamp))
+	try:
+		row = delhi_electricity.frequency(frequency=frequency, timestamp=timestamp)
+	except Exception:
+		pass
+	else:
+		sqlalchemy_session.add(row)
+		try:
+			# Commit the changes to the database
+			sqlalchemy_session.commit()
+			# Flush the changes to the database
+			sqlalchemy_session.flush()
+		except Exception as e:
+			# Rollback the current transaction
+			sqlalchemy_session.rollback()
 
 	# Create dictionary of power generation/consumption measurements from different entities viz. plants, companies and jurisdictions
 	print(make_dictionary(html, 'plants_state', "ContentPlaceHolder3_ddgenco", "ContentPlaceHolder3_dgenco", 6, 2, 0))
@@ -37,5 +56,26 @@ def fetch(session=None):
 	print(make_dictionary(html, 'energy_export', "ContentPlaceHolder3_lblexporttime", "ContentPlaceHolder3_dEXPORT", 9, 1, 0))
 
 if __name__ == '__main__':
-	session = Session()
-	fetch(session)
+
+	# TimescaleDB configuration
+	timescaledb_hostname = os.environ.get("DELHI_ELECTRICITY__TIMESCALEDB__HOSTNAME", "localhost")
+	timescaledb_portnumber = int(os.environ.get("DELHI_ELECTRICITY__TIMESCALEDB__PORTNUMBER", 5432))
+	timescaledb_database = os.environ.get("DELHI_ELECTRICITY__TIMESCALEDB__DATABASE", "DATABASE_NAME")
+	timescaledb_username = os.environ.get("DELHI_ELECTRICITY__TIMESCALEDB__USERNAME", "delhi_electricity")
+	timescaledb_password = os.environ.get("DELHI_ELECTRICITY__TIMESCALEDB__PASSWORD", "delhi_electricity")
+	timescaledb_schema = os.environ.get("DELHI_ELECTRICITY__TIMESCALEDB__SCHEMA", "delhi_electricity")
+
+	# Create the TimescaleDB engine
+	db_url = f"postgresql://{timescaledb_username}:{timescaledb_password}@{timescaledb_hostname}:{timescaledb_portnumber}/{timescaledb_database}"
+	engine = delhi_electricity.create_engine(db_url, pool_size=2, max_overflow=0, pool_timeout=5)
+
+	# Create the database tables (if not already created)
+	delhi_electricity.Base.metadata.create_all(engine)
+
+	# Create a session factory
+	sqlalchemy_session_factory = scoped_session(sessionmaker(bind=engine))
+	sqlalchemy_session = sqlalchemy_session_factory()
+
+	requests_session = Session()
+
+	fetch(requests_session, sqlalchemy_session)
