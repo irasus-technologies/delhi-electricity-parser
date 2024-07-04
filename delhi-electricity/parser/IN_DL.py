@@ -3,13 +3,14 @@
 from sqlalchemy.orm import scoped_session, sessionmaker
 from requests import Session
 import os
+from datetime import datetime
 
 from .tools import web
 from .tools import read
 from .tools import delhi_electricity
-from .metadata import dictionary
+# from .metadata import dictionary
 
-def make_dictionary(blob, name, timetag, tabletag, count, value_position, value_nonnegative):
+def make_dictionary(blob, name, timetag, tabletag, value_position, value_nonnegative, sqlalchemy_session):
 	# Create empty dictionary to fill measurements into
 	x = {}
 	# Retrieve timestamp corresponding to the set of measurements of interest
@@ -17,43 +18,27 @@ def make_dictionary(blob, name, timetag, tabletag, count, value_position, value_
 	# Retrieve rows from table containing power measurements from different entities
 	rows = blob.find("table", {"id": tabletag}).findAll('tr')
 	# Iterate over rows
-	for index in range(0, count):
+	for index in range(0, len(rows) - 1):
 		# Retrieve the power measurement and the name of the entity, and assign the measurement against the index number of the entity categorized by its type
-		x[dictionary.items[name][read.name(rows[index + 1])]] = read.value(rows[index + 1], value_position, value_nonnegative)
+		# x[dictionary.items[name][read.name(rows[index + 1])]] = read.value(rows[index + 1], value_position, value_nonnegative)
+		x[read.name(rows[index + 1])] = read.value(rows[index + 1], value_position, value_nonnegative)
+		try:
+			row = delhi_electricity.power(unitName=read.name(rows[index + 1]), unitType=name, timestamp=datetime.strptime(read.datetime_with_only_time(read.text_from_span_content(blob, timetag), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'), '%Y-%m-%d %H:%M:%S'), power=read.value(rows[index + 1], value_position, value_nonnegative))
+		except Exception as e:
+			print(f"Exception \"{e}\"")
+		else:
+			sqlalchemy_session.add(row)
+			try:
+				# Commit the changes to the database
+				sqlalchemy_session.commit()
+				# Flush the changes to the database
+				sqlalchemy_session.flush()
+			except Exception as e:
+				print(f"Exception \"{e}\"")
+				# Rollback the current transaction
+				sqlalchemy_session.rollback()
 	# Return a dictionary of all power measurements and the corresponding timestamp
 	return x
-
-def fetch(requests_session=None, sqlalchemy_session=None):
-	# Read real-time dashboard's webpage into blob using BeautifulSoup
-	html = web.get_response_bs4('IN-DL', 'http://www.delhisldc.org/Redirect.aspx?Loc=0804', requests_session)
-
-	# Retrieve frequency of the grid from span tag's content
-	frequency = read.text_from_span_content(html, 'ContentPlaceHolder3_LBLFREQUENCY')
-	timestamp = read.datetime_with_only_time(read.text_from_span_content(html, "ContentPlaceHolder3_ddtime"), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
-	# print(str(frequency) + ' ' + str(timestamp))
-	try:
-		row = delhi_electricity.frequency(frequency=frequency, timestamp=timestamp)
-	except Exception:
-		pass
-	else:
-		sqlalchemy_session.add(row)
-		try:
-			# Commit the changes to the database
-			sqlalchemy_session.commit()
-			# Flush the changes to the database
-			sqlalchemy_session.flush()
-		except Exception as e:
-			# Rollback the current transaction
-			sqlalchemy_session.rollback()
-
-	# Create dictionary of power generation/consumption measurements from different entities viz. plants, companies and jurisdictions
-	print(make_dictionary(html, 'plants_state', "ContentPlaceHolder3_ddgenco", "ContentPlaceHolder3_dgenco", 6, 2, 0))
-	print(make_dictionary(html, 'discoms', "ContentPlaceHolder3_ddtime", "ContentPlaceHolder3_DDISCOM", 6, 2, 0))
-	print(make_dictionary(html, 'states', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_Dstatedrawl", 8, 4, 0))
-	print(make_dictionary(html, 'plants_centre', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_dcsgeneration", 25, 2, 0))
-	print(make_dictionary(html, 'substations', "ContentPlaceHolder3_lblgridtime", "ContentPlaceHolder3_dgrid", 45, 2, 0))
-	print(make_dictionary(html, 'energy_import', "ContentPlaceHolder3_lblimporttime", "ContentPlaceHolder3_DIMPORT", 33, 2, 0))
-	print(make_dictionary(html, 'energy_export', "ContentPlaceHolder3_lblexporttime", "ContentPlaceHolder3_dEXPORT", 9, 1, 0))
 
 if __name__ == '__main__':
 
@@ -78,4 +63,34 @@ if __name__ == '__main__':
 
 	requests_session = Session()
 
-	fetch(requests_session, sqlalchemy_session)
+	# Read real-time dashboard's webpage into blob using BeautifulSoup
+	html = web.get_response_bs4('IN-DL', 'http://www.delhisldc.org/Redirect.aspx?Loc=0804', requests_session)
+
+	# Retrieve frequency of the grid from span tag's content
+	frequency = read.text_from_span_content(html, 'ContentPlaceHolder3_LBLFREQUENCY')
+	timestamp = read.datetime_with_only_time(read.text_from_span_content(html, "ContentPlaceHolder3_ddtime"), 'HH:mm:ss').format('YYYY-MM-DD HH:mm:ss')
+	# print(str(frequency) + ' ' + str(timestamp))
+	try:
+		row = delhi_electricity.frequency(frequency=frequency, timestamp=timestamp)
+	except Exception as e:
+		print(f"Exception \"{e}\"")
+	else:
+		sqlalchemy_session.add(row)
+		try:
+			# Commit the changes to the database
+			sqlalchemy_session.commit()
+			# Flush the changes to the database
+			sqlalchemy_session.flush()
+		except Exception as e:
+			print(f"Exception \"{e}\"")
+			# Rollback the current transaction
+			sqlalchemy_session.rollback()
+
+	# Create dictionary of power generation/consumption measurements from different entities viz. plants, companies and jurisdictions
+	print(make_dictionary(html, 'plants_state', "ContentPlaceHolder3_ddgenco", "ContentPlaceHolder3_dgenco", 2, 0, sqlalchemy_session))
+	print(make_dictionary(html, 'discoms', "ContentPlaceHolder3_ddtime", "ContentPlaceHolder3_DDISCOM", 2, 0, sqlalchemy_session))
+	print(make_dictionary(html, 'states', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_Dstatedrawl", 4, 0, sqlalchemy_session))
+	print(make_dictionary(html, 'plants_centre', "ContentPlaceHolder3_lblstatestime", "ContentPlaceHolder3_dcsgeneration", 2, 0, sqlalchemy_session))
+	print(make_dictionary(html, 'substations', "ContentPlaceHolder3_lblgridtime", "ContentPlaceHolder3_dgrid", 2, 0, sqlalchemy_session))
+	print(make_dictionary(html, 'energy_import', "ContentPlaceHolder3_lblimporttime", "ContentPlaceHolder3_DIMPORT", 2, 0, sqlalchemy_session))
+	print(make_dictionary(html, 'energy_export', "ContentPlaceHolder3_lblexporttime", "ContentPlaceHolder3_dEXPORT", 1, 0, sqlalchemy_session))

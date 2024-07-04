@@ -1,1 +1,1 @@
-*/1 * * * * (cd / && python3 -m parser.IN_DL)
+*/1 * * * * (cd / && /usr/local/bin/python3 -m parser.IN_DL)
